@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daily Planner</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f9f9;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #2d6a4f;
+    }
+
+    .planner-section {
+      margin: 20px 0;
+    }
+
+    .planner-section h2 {
+      margin-bottom: 10px;
+      color: #40916c;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 2px solid #d8f3dc;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #74c69d;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🗓️ My Daily Planner</h1>
+    
+    <div class="planner-section">
+      <h2>🌅 Morning</h2>
+      <ul>
+        <li><input type="text" placeholder="Add a task..."></li>
+        <li><input type="text" placeholder="Add a task..."></li>
+        <li><input type="text" placeholder="Add a task..."></li>
+      </ul>
+    </div>
+
+    <div class="planner-section">
+      <h2>🌞 Afternoon</h2>
+      <ul>
+        <li><input type="text" placeholder="Add a task..."></li>
+        <li><input type="text" placeholder="Add a task..."></li>
+        <li><input type="text" placeholder="Add a task..."></li>
+      </ul>
+    </div>
+
+    <div class="planner-section">
+      <h2>🌙 Evening</h2>
+      <ul>
+        <li><input type="text" placeholder="Add a task..."></li>
+        <li><input type="text" placeholder="Add a task..."></li>
+        <li><input type="text" placeholder="Add a task..."></li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
