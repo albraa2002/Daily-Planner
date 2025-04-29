@@ -3,20 +3,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Daily Planner</title>
+  <title>Advanced Daily Planner</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f0f4f8;
+      background: var(--bg);
       margin: 0;
       padding: 20px;
-      color: #333;
+      color: var(--text);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    :root {
+      --bg: #f0f4f8;
+      --text: #333;
+      --card-bg: #fff;
+      --border: #cbd5e0;
+      --accent: #319795;
+      --accent-hover: #2c7a7b;
+      --danger: #e53e3e;
+      --danger-hover: #c53030;
+      --table-header: #81e6d9;
+      --table-header-text: #234e52;
+    }
+
+    .dark-mode {
+      --bg: #1a202c;
+      --text: #e2e8f0;
+      --card-bg: #2d3748;
+      --border: #4a5568;
+      --accent: #63b3ed;
+      --accent-hover: #4299e1;
+      --danger: #f56565;
+      --danger-hover: #c53030;
+      --table-header: #2c5282;
+      --table-header-text: #ebf8ff;
     }
 
     .container {
       max-width: 900px;
       margin: auto;
-      background: #fff;
+      background: var(--card-bg);
       border-radius: 15px;
       padding: 30px;
       box-shadow: 0 6px 12px rgba(0,0,0,0.1);
@@ -24,7 +51,7 @@
 
     h1 {
       text-align: center;
-      color: #2c7a7b;
+      color: var(--accent);
       margin-bottom: 30px;
     }
 
@@ -33,8 +60,8 @@
     }
 
     .section-card {
-      background-color: #e6fffa;
-      border: 1px solid #b2f5ea;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
       border-radius: 12px;
       padding: 20px;
       margin-bottom: 30px;
@@ -42,7 +69,7 @@
     }
 
     .section-card h2 {
-      color: #285e61;
+      color: var(--accent);
       margin-bottom: 15px;
     }
 
@@ -57,15 +84,17 @@
     input[type="text"], select {
       padding: 10px;
       border-radius: 8px;
-      border: 1px solid #cbd5e0;
+      border: 1px solid var(--border);
       flex: 1 1 250px;
+      background: var(--card-bg);
+      color: var(--text);
     }
 
     button {
       padding: 10px 16px;
       border: none;
       border-radius: 8px;
-      background-color: #319795;
+      background-color: var(--accent);
       color: white;
       font-weight: bold;
       cursor: pointer;
@@ -73,7 +102,20 @@
     }
 
     button:hover {
-      background-color: #2c7a7b;
+      background-color: var(--accent-hover);
+    }
+
+    .delete-btn {
+      background-color: var(--danger);
+    }
+
+    .delete-btn:hover {
+      background-color: var(--danger-hover);
+    }
+
+    .done {
+      text-decoration: line-through;
+      opacity: 0.6;
     }
 
     table {
@@ -83,28 +125,37 @@
     }
 
     th, td {
-      border: 1px solid #cbd5e0;
+      border: 1px solid var(--border);
       padding: 12px;
       text-align: left;
     }
 
     th {
-      background-color: #81e6d9;
-      color: #234e52;
+      background-color: var(--table-header);
+      color: var(--table-header-text);
     }
 
-    .delete-btn {
-      background-color: #e53e3e;
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
     }
 
-    .delete-btn:hover {
-      background-color: #c53030;
+    .dark-toggle {
+      background: none;
+      color: var(--accent);
+      font-weight: bold;
+      border: 2px solid var(--accent);
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🗓️ My Professional Daily Planner</h1>
+    <div class="top-bar">
+      <h1>🗓️ Advanced Daily Planner</h1>
+      <button class="dark-toggle" onclick="toggleDarkMode()">🌓 Toggle Dark Mode</button>
+    </div>
 
     <div class="input-group">
       <input type="text" id="taskInput" placeholder="Enter your task..." />
@@ -121,11 +172,7 @@
         <h2>🌅 Morning Tasks</h2>
         <table>
           <thead>
-            <tr>
-              <th>#</th>
-              <th>Task</th>
-              <th>Action</th>
-            </tr>
+            <tr><th>#</th><th>Task</th><th>Actions</th></tr>
           </thead>
           <tbody id="morningTasks"></tbody>
         </table>
@@ -135,11 +182,7 @@
         <h2>🌞 Afternoon Tasks</h2>
         <table>
           <thead>
-            <tr>
-              <th>#</th>
-              <th>Task</th>
-              <th>Action</th>
-            </tr>
+            <tr><th>#</th><th>Task</th><th>Actions</th></tr>
           </thead>
           <tbody id="afternoonTasks"></tbody>
         </table>
@@ -149,11 +192,7 @@
         <h2>🌙 Evening Tasks</h2>
         <table>
           <thead>
-            <tr>
-              <th>#</th>
-              <th>Task</th>
-              <th>Action</th>
-            </tr>
+            <tr><th>#</th><th>Task</th><th>Actions</th></tr>
           </thead>
           <tbody id="eveningTasks"></tbody>
         </table>
@@ -162,52 +201,82 @@
   </div>
 
   <script>
-    const taskCounters = {
-      morning: 1,
-      afternoon: 1,
-      evening: 1
-    };
+    const taskCounters = { morning: 1, afternoon: 1, evening: 1 };
+    const taskData = { morning: [], afternoon: [], evening: [] };
+
+    function saveToStorage() {
+      localStorage.setItem("plannerTasks", JSON.stringify(taskData));
+    }
+
+    function loadFromStorage() {
+      const saved = JSON.parse(localStorage.getItem("plannerTasks"));
+      if (!saved) return;
+      for (let time in saved) {
+        saved[time].forEach((task) => createTaskRow(task.text, time, task.done));
+      }
+    }
 
     function addTask() {
       const taskInput = document.getElementById("taskInput");
       const timeSelect = document.getElementById("timeSelect");
       const task = taskInput.value.trim();
       const time = timeSelect.value;
-
-      if (!task) {
-        alert("Please enter a task!");
-        return;
-      }
-
-      const tbody = document.getElementById(time + "Tasks");
-      const row = document.createElement("tr");
-
-      row.innerHTML = `
-        <td>${taskCounters[time]}</td>
-        <td>${task}</td>
-        <td><button class="delete-btn" onclick="deleteTask(this, '${time}')">Delete</button></td>
-      `;
-
-      tbody.appendChild(row);
-      taskCounters[time]++;
+      if (!task) return alert("Please enter a task!");
+      createTaskRow(task, time);
       taskInput.value = "";
     }
 
+    function createTaskRow(task, time, done = false) {
+      const tbody = document.getElementById(time + "Tasks");
+      const row = document.createElement("tr");
+
+      const index = taskCounters[time]++;
+      row.innerHTML = `
+        <td>${index}</td>
+        <td class="${done ? 'done' : ''}">${task}</td>
+        <td>
+          <button onclick="toggleDone(this, '${time}')">✅ Done</button>
+          <button class="delete-btn" onclick="deleteTask(this, '${time}')">🗑️ Delete</button>
+        </td>
+      `;
+
+      tbody.appendChild(row);
+      taskData[time].push({ text: task, done });
+      saveToStorage();
+    }
+
     function deleteTask(button, time) {
-      const row = button.parentElement.parentElement;
+      const row = button.closest("tr");
+      const index = row.rowIndex - 1;
       row.remove();
+      taskData[time].splice(index, 1);
       updateNumbers(time);
+      saveToStorage();
     }
 
     function updateNumbers(time) {
       const tbody = document.getElementById(time + "Tasks");
       const rows = tbody.querySelectorAll("tr");
       taskCounters[time] = 1;
-
-      rows.forEach((row) => {
+      rows.forEach((row, i) => {
         row.cells[0].innerText = taskCounters[time]++;
       });
     }
+
+    function toggleDone(btn, time) {
+      const row = btn.closest("tr");
+      const index = row.rowIndex - 1;
+      const cell = row.cells[1];
+      cell.classList.toggle("done");
+      taskData[time][index].done = !taskData[time][index].done;
+      saveToStorage();
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+    }
+
+    window.onload = loadFromStorage;
   </script>
 </body>
 </html>
