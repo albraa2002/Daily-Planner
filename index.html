@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Task Summary</title>
+  <title>Daily Planner</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -22,6 +22,72 @@
       font-weight: bold;
     }
 
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .container h1 {
+      text-align: center;
+      color: #2d6a4f;
+    }
+
+    .planner-section {
+      margin: 20px 0;
+    }
+
+    .planner-section h2 {
+      margin-bottom: 10px;
+      color: #40916c;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 2px solid #d8f3dc;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #74c69d;
+      outline: none;
+    }
+
+    .dark-mode-btn {
+      padding: 8px 16px;
+      background-color: #2d6a4f;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      transition: background-color 0.3s;
+    }
+
+    .dark-mode-btn:hover {
+      background-color: #40916c;
+    }
+
+    /* Dark mode styles */
+    body.dark-mode {
+      background-color: #333;
+      color: #fff;
+    }
+
+    .container.dark-mode {
+      background-color: #444;
+    }
+
+    /* Task Summary Page */
     .summary-container {
       max-width: 700px;
       margin: 40px auto;
@@ -82,9 +148,45 @@
   </style>
 </head>
 <body>
-  <div class="navbar">📋 Task Summary</div>
+  <button class="dark-mode-btn" onclick="toggleDarkMode()">🌙</button>
 
-  <div class="summary-container">
+  <div id="plannerPage" class="container">
+    <h1>🗓️ My Daily Planner</h1>
+    
+    <div class="planner-section">
+      <h2>🌅 Morning</h2>
+      <ul>
+        <li><input type="text" placeholder="Add a task..."></li>
+        <li><input type="text" placeholder="Add a task..."></li>
+        <li><input type="text" placeholder="Add a task..."></li>
+      </ul>
+    </div>
+
+    <div class="planner-section">
+      <h2>🌞 Afternoon</h2>
+      <ul>
+        <li><input type="text" placeholder="Add a task..."></li>
+        <li><input type="text" placeholder="Add a task..."></li>
+        <li><input type="text" placeholder="Add a task..."></li>
+      </ul>
+    </div>
+
+    <div class="planner-section">
+      <h2>🌙 Evening</h2>
+      <ul>
+        <li><input type="text" placeholder="Add a task..."></li>
+        <li><input type="text" placeholder="Add a task..."></li>
+        <li><input type="text" placeholder="Add a task..."></li>
+      </ul>
+    </div>
+
+    <div class="planner-section">
+      <h2>📊 Task Summary</h2>
+      <button class="back-btn" onclick="showSummaryPage()">View Summary</button>
+    </div>
+  </div>
+
+  <div id="summaryPage" class="summary-container" style="display: none;">
     <div class="summary-title">📈 Overview of Your Daily Tasks</div>
 
     <div class="summary-section">
@@ -108,7 +210,29 @@
       <p>Pending: <strong>2</strong></p>
     </div>
 
-    <button class="back-btn" onclick="window.location.href='index.html'">← Back to Planner</button>
+    <button class="back-btn" onclick="showPlannerPage()">← Back to Planner</button>
   </div>
+
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+      const button = document.querySelector('.dark-mode-btn');
+      if (document.body.classList.contains("dark-mode")) {
+        button.textContent = "🌞";
+      } else {
+        button.textContent = "🌙";
+      }
+    }
+
+    function showSummaryPage() {
+      document.getElementById('plannerPage').style.display = 'none';
+      document.getElementById('summaryPage').style.display = 'block';
+    }
+
+    function showPlannerPage() {
+      document.getElementById('plannerPage').style.display = 'block';
+      document.getElementById('summaryPage').style.display = 'none';
+    }
+  </script>
 </body>
 </html>
