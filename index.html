@@ -1,91 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Daily Planner</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f4f9f9;
+      background: #f0f4f8;
       margin: 0;
       padding: 20px;
       color: #333;
     }
 
     .container {
-      max-width: 600px;
+      max-width: 900px;
       margin: auto;
       background: #fff;
-      border-radius: 12px;
+      border-radius: 15px;
       padding: 30px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
     }
 
     h1 {
       text-align: center;
-      color: #2d6a4f;
+      color: #2c7a7b;
+      margin-bottom: 30px;
     }
 
     .planner-section {
-      margin: 20px 0;
+      margin-top: 40px;
     }
 
-    .planner-section h2 {
-      margin-bottom: 10px;
-      color: #40916c;
+    .section-card {
+      background-color: #e6fffa;
+      border: 1px solid #b2f5ea;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
 
-    ul {
-      list-style-type: none;
-      padding: 0;
+    .section-card h2 {
+      color: #285e61;
+      margin-bottom: 15px;
     }
 
-    input[type="text"] {
-      width: 100%;
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    input[type="text"], select {
       padding: 10px;
-      margin-bottom: 10px;
-      border: 2px solid #d8f3dc;
       border-radius: 8px;
+      border: 1px solid #cbd5e0;
+      flex: 1 1 250px;
+    }
+
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #319795;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
       transition: 0.3s;
     }
 
-    input[type="text"]:focus {
-      border-color: #74c69d;
-      outline: none;
+    button:hover {
+      background-color: #2c7a7b;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #cbd5e0;
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #81e6d9;
+      color: #234e52;
+    }
+
+    .delete-btn {
+      background-color: #e53e3e;
+    }
+
+    .delete-btn:hover {
+      background-color: #c53030;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🗓️ My Daily Planner</h1>
-    
-    <div class="planner-section">
-      <h2>🌅 Morning</h2>
-      <ul>
-        <li><input type="text" placeholder="Add a task..."></li>
-        <li><input type="text" placeholder="Add a task..."></li>
-        <li><input type="text" placeholder="Add a task..."></li>
-      </ul>
+    <h1>🗓️ My Professional Daily Planner</h1>
+
+    <div class="input-group">
+      <input type="text" id="taskInput" placeholder="Enter your task..." />
+      <select id="timeSelect">
+        <option value="morning">🌅 Morning</option>
+        <option value="afternoon">🌞 Afternoon</option>
+        <option value="evening">🌙 Evening</option>
+      </select>
+      <button onclick="addTask()">Add Task</button>
     </div>
 
     <div class="planner-section">
-      <h2>🌞 Afternoon</h2>
-      <ul>
-        <li><input type="text" placeholder="Add a task..."></li>
-        <li><input type="text" placeholder="Add a task..."></li>
-        <li><input type="text" placeholder="Add a task..."></li>
-      </ul>
-    </div>
+      <div class="section-card">
+        <h2>🌅 Morning Tasks</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Task</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="morningTasks"></tbody>
+        </table>
+      </div>
 
-    <div class="planner-section">
-      <h2>🌙 Evening</h2>
-      <ul>
-        <li><input type="text" placeholder="Add a task..."></li>
-        <li><input type="text" placeholder="Add a task..."></li>
-        <li><input type="text" placeholder="Add a task..."></li>
-      </ul>
+      <div class="section-card">
+        <h2>🌞 Afternoon Tasks</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Task</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="afternoonTasks"></tbody>
+        </table>
+      </div>
+
+      <div class="section-card">
+        <h2>🌙 Evening Tasks</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Task</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="eveningTasks"></tbody>
+        </table>
+      </div>
     </div>
   </div>
+
+  <script>
+    const taskCounters = {
+      morning: 1,
+      afternoon: 1,
+      evening: 1
+    };
+
+    function addTask() {
+      const taskInput = document.getElementById("taskInput");
+      const timeSelect = document.getElementById("timeSelect");
+      const task = taskInput.value.trim();
+      const time = timeSelect.value;
+
+      if (!task) {
+        alert("Please enter a task!");
+        return;
+      }
+
+      const tbody = document.getElementById(time + "Tasks");
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${taskCounters[time]}</td>
+        <td>${task}</td>
+        <td><button class="delete-btn" onclick="deleteTask(this, '${time}')">Delete</button></td>
+      `;
+
+      tbody.appendChild(row);
+      taskCounters[time]++;
+      taskInput.value = "";
+    }
+
+    function deleteTask(button, time) {
+      const row = button.parentElement.parentElement;
+      row.remove();
+      updateNumbers(time);
+    }
+
+    function updateNumbers(time) {
+      const tbody = document.getElementById(time + "Tasks");
+      const rows = tbody.querySelectorAll("tr");
+      taskCounters[time] = 1;
+
+      rows.forEach((row) => {
+        row.cells[0].innerText = taskCounters[time]++;
+      });
+    }
+  </script>
 </body>
 </html>
