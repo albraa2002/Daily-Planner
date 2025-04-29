@@ -3,55 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Daily Planner</title>
+  <title>Daily Planner</title>
   <style>
-    :root {
-      --bg-color: #f4f9f9;
-      --text-color: #333;
-      --container-bg: #ffffff;
-      --input-bg: #ffffff;
-      --input-border: #d8f3dc;
-      --primary-color: #2d6a4f;
-      --section-color: #40916c;
-    }
-
-    body.dark-mode {
-      --bg-color: #121212;
-      --text-color: #f0f0f0;
-      --container-bg: #1e1e1e;
-      --input-bg: #2c2c2c;
-      --input-border: #74c69d;
-    }
-
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
+      background-color: #f4f9f9;
+      color: #333;
       margin: 0;
       padding: 20px;
-      transition: 0.3s;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .dark-mode {
+      background-color: #121212;
+      color: #f4f4f4;
     }
 
     .container {
-      max-width: 800px;
+      max-width: 700px;
       margin: auto;
-      background: var(--container-bg);
+      background: #fff;
       border-radius: 12px;
       padding: 30px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .dark-mode .container {
+      background: #1e1e1e;
     }
 
     h1 {
       text-align: center;
-      color: var(--primary-color);
+      color: #2d6a4f;
+    }
+
+    .dark-mode h1 {
+      color: #90ee90;
     }
 
     .planner-section {
-      margin: 25px 0;
+      margin: 20px 0;
     }
 
     .planner-section h2 {
-      color: var(--section-color);
+      color: #40916c;
+    }
+
+    .dark-mode .planner-section h2 {
+      color: #b7f397;
     }
 
     ul {
@@ -59,170 +59,165 @@
       padding: 0;
     }
 
-    li {
+    .task-input {
+      width: 70%;
+      padding: 10px;
+      margin-right: 10px;
+      border: 2px solid #d8f3dc;
+      border-radius: 8px;
+    }
+
+    .dark-mode .task-input {
+      background: #2c2c2c;
+      color: #f4f4f4;
+      border-color: #40916c;
+    }
+
+    button.add-btn, button.delete-btn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      background-color: #52b788;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button.add-btn:hover {
+      background-color: #40916c;
+    }
+
+    button.delete-btn {
+      background-color: #e63946;
+      margin-left: 10px;
+    }
+
+    button.delete-btn:hover {
+      background-color: #c1121f;
+    }
+
+    .task-item {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
+      margin: 5px 0;
     }
 
-    input[type="text"] {
-      flex: 1;
-      padding: 10px;
-      background-color: var(--input-bg);
-      border: 2px solid var(--input-border);
-      border-radius: 8px;
-      color: var(--text-color);
-      margin-right: 10px;
-    }
-
-    button.add-btn, button.del-btn, .theme-btn {
-      padding: 8px 12px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .add-btn {
-      background-color: #52b788;
-      color: #fff;
-    }
-
-    .del-btn {
-      background-color: #e63946;
-      color: #fff;
-    }
-
-    .theme-btn {
-      float: right;
-      background-color: #adb5bd;
-      color: #000;
+    .dark-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin-bottom: 20px;
     }
 
-    .completed {
-      text-decoration: line-through;
-      opacity: 0.6;
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
     }
 
-    .calendar {
-      text-align: center;
-      margin-top: 10px;
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
     }
 
-    .stats {
-      margin-top: 20px;
-      text-align: center;
-      color: #555;
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0;
+      right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "☀️";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    input:checked + .slider {
+      background-color: #74c69d;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+      content: "🌙";
     }
   </style>
 </head>
 <body>
+  <div class="dark-toggle">
+    <label class="toggle-switch">
+      <input type="checkbox" id="darkModeToggle">
+      <span class="slider"></span>
+    </label>
+  </div>
+
   <div class="container">
-    <button class="theme-btn" onclick="toggleTheme()">Toggle Dark Mode</button>
     <h1>🗓️ My Daily Planner</h1>
-    <div class="calendar">
-      <input type="date" id="planner-date" value="">
-    </div>
 
-    <div class="planner-section" id="morning">
+    <div class="planner-section">
       <h2>🌅 Morning</h2>
-      <ul id="morning-tasks"></ul>
-      <button class="add-btn" onclick="addTask('morning')">+ Add Task</button>
+      <div class="task-item">
+        <input class="task-input" type="text" id="morning-task">
+        <button class="add-btn" onclick="addTask('morning')">Add</button>
+      </div>
+      <ul id="morning-list"></ul>
     </div>
 
-    <div class="planner-section" id="afternoon">
+    <div class="planner-section">
       <h2>🌞 Afternoon</h2>
-      <ul id="afternoon-tasks"></ul>
-      <button class="add-btn" onclick="addTask('afternoon')">+ Add Task</button>
+      <div class="task-item">
+        <input class="task-input" type="text" id="afternoon-task">
+        <button class="add-btn" onclick="addTask('afternoon')">Add</button>
+      </div>
+      <ul id="afternoon-list"></ul>
     </div>
 
-    <div class="planner-section" id="evening">
+    <div class="planner-section">
       <h2>🌙 Evening</h2>
-      <ul id="evening-tasks"></ul>
-      <button class="add-btn" onclick="addTask('evening')">+ Add Task</button>
-    </div>
-
-    <div class="stats">
-      <p>✅ Completed: <span id="completed-count">0</span> | 📌 Remaining: <span id="remaining-count">0</span></p>
+      <div class="task-item">
+        <input class="task-input" type="text" id="evening-task">
+        <button class="add-btn" onclick="addTask('evening')">Add</button>
+      </div>
+      <ul id="evening-list"></ul>
     </div>
   </div>
 
   <script>
-    const taskData = JSON.parse(localStorage.getItem("tasks")) || { morning: [], afternoon: [], evening: [] };
-
-    function updateStorage() {
-      localStorage.setItem("tasks", JSON.stringify(taskData));
-    }
-
-    function renderTasks() {
-      ["morning", "afternoon", "evening"].forEach(period => {
-        const ul = document.getElementById(`${period}-tasks`);
-        ul.innerHTML = "";
-        taskData[period].forEach((task, index) => {
-          const li = document.createElement("li");
-          const input = document.createElement("input");
-          input.type = "text";
-          input.value = task.text;
-          input.className = task.done ? "completed" : "";
-          input.onchange = () => {
-            task.text = input.value;
-            updateStorage();
-            renderStats();
-          };
-          input.onclick = () => {
-            task.done = !task.done;
-            updateStorage();
-            renderTasks();
-          };
-
-          const delBtn = document.createElement("button");
-          delBtn.textContent = "🗑️";
-          delBtn.className = "del-btn";
-          delBtn.onclick = () => {
-            taskData[period].splice(index, 1);
-            updateStorage();
-            renderTasks();
-          };
-
-          li.appendChild(input);
-          li.appendChild(delBtn);
-          ul.appendChild(li);
-        });
-      });
-      renderStats();
-    }
+    const darkToggle = document.getElementById("darkModeToggle");
+    darkToggle.addEventListener("change", () => {
+      document.body.classList.toggle("dark-mode");
+    });
 
     function addTask(period) {
-      taskData[period].push({ text: "New Task", done: false });
-      updateStorage();
-      renderTasks();
+      const input = document.getElementById(`${period}-task`);
+      const taskText = input.value.trim();
+      if (taskText === "") return;
+
+      const ul = document.getElementById(`${period}-list`);
+      const li = document.createElement("li");
+      li.className = "task-item";
+      li.innerHTML = `
+        <span>${taskText}</span>
+        <button class="delete-btn" onclick="this.parentElement.remove()">Delete</button>
+      `;
+      ul.appendChild(li);
+      input.value = "";
     }
-
-    function toggleTheme() {
-      document.body.classList.toggle("dark-mode");
-    }
-
-    function renderStats() {
-      let completed = 0;
-      let total = 0;
-      Object.values(taskData).forEach(list => {
-        list.forEach(task => {
-          total++;
-          if (task.done) completed++;
-        });
-      });
-      document.getElementById("completed-count").textContent = completed;
-      document.getElementById("remaining-count").textContent = total - completed;
-    }
-
-    // Load selected date from localStorage
-    const dateInput = document.getElementById("planner-date");
-    const savedDate = localStorage.getItem("planner-date");
-    if (savedDate) dateInput.value = savedDate;
-    dateInput.onchange = () => localStorage.setItem("planner-date", dateInput.value);
-
-    renderTasks();
   </script>
 </body>
 </html>
