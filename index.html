@@ -1,237 +1,231 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daily Planner</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Task List</title>
   <style>
+    :root {
+      --bg-color: #f5f5f5;
+      --text-color: #333;
+      --item-bg: #fff;
+      --primary: #1976d2;
+      --danger: #e53935;
+      --accent: #43a047;
+    }
+    [data-theme="dark"] {
+      --bg-color: #121212;
+      --text-color: #e0e0e0;
+      --item-bg: #1e1e1e;
+      --primary: #90caf9;
+      --danger: #ef9a9a;
+      --accent: #a5d6a7;
+    }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Segoe UI', sans-serif;
       margin: 0;
-      padding: 0;
-      background-color: #f8f9fa;
-      color: #333;
+      padding: 2rem;
+      transition: background 0.3s, color 0.3s;
     }
-
-    .navbar {
-      background-color: #2d6a4f;
-      padding: 1rem;
-      text-align: center;
-      color: white;
-      font-size: 1.5rem;
-      font-weight: bold;
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2rem;
     }
-
-    .container {
-      max-width: 900px;
-      margin: 30px auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .container h1 {
-      text-align: center;
-      color: #2d6a4f;
-    }
-
-    .planner-section {
-      margin: 20px 0;
-    }
-
-    .planner-section h2 {
-      margin-bottom: 10px;
-      color: #40916c;
-    }
-
-    input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: 2px solid #d8f3dc;
-      border-radius: 8px;
-      transition: 0.3s;
-    }
-
-    input[type="text"]:focus {
-      border-color: #74c69d;
+    input[type="text"], select, button {
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border-radius: 0.6rem;
+      border: 1px solid #ccc;
       outline: none;
     }
-
-    .dark-mode-btn {
-      padding: 8px 16px;
-      background-color: #2d6a4f;
-      color: #fff;
-      border: none;
-      border-radius: 50%;
+    button {
       cursor: pointer;
-      font-size: 20px;
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      transition: background-color 0.3s;
+      transition: background 0.3s;
     }
-
-    .dark-mode-btn:hover {
-      background-color: #40916c;
+    #tasksContainer {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
-
-    /* Dark mode styles */
-    body.dark-mode {
-      background-color: #333;
-      color: #fff;
+    .task-section {
+      background: var(--item-bg);
+      width: 30%;
+      min-width: 250px;
+      padding: 1rem;
+      border-radius: 1rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
-
-    .container.dark-mode {
-      background-color: #444;
-    }
-
-    /* Task Summary Page */
-    .summary-container {
-      max-width: 700px;
-      margin: 40px auto;
-      background-color: #ffffff;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-      padding: 30px;
-      animation: fadeIn 0.7s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .summary-title {
-      font-size: 28px;
-      color: #1b4332;
-      margin-bottom: 20px;
+    .task-section h2 {
+      margin-bottom: 1rem;
+      color: var(--primary);
       text-align: center;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.5rem;
     }
-
-    .summary-section {
-      background-color: #e9f5ec;
-      border-left: 6px solid #40916c;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
+    .task-list {
+      padding-left: 1.2rem;
+      min-height: 100px;
     }
-
-    .summary-section h3 {
-      margin-top: 0;
-      color: #2d6a4f;
+    .task-list li {
+      list-style: decimal;
+      background: var(--bg-color);
+      margin: 0.5rem 0;
+      padding: 0.75rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      cursor: grab;
     }
-
-    .summary-section p {
-      margin: 10px 0;
-      font-size: 16px;
+    .task-list li.dragging {
+      opacity: 0.5;
     }
-
-    .back-btn {
-      display: block;
-      width: fit-content;
-      margin: 30px auto 0;
-      padding: 10px 20px;
-      background-color: #2d6a4f;
-      color: white;
+    .task-list.drag-over {
+      border: 2px dashed var(--primary);
+      padding: 10px;
+    }
+    .completed {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+    .task-actions button {
+      background: none;
       border: none;
-      border-radius: 8px;
-      font-size: 16px;
+      font-size: 1rem;
+      margin-left: 0.5rem;
       cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .back-btn:hover {
-      background-color: #1b4332;
     }
   </style>
 </head>
 <body>
-  <button class="dark-mode-btn" onclick="toggleDarkMode()">🌙</button>
-
-  <div id="plannerPage" class="container">
-    <h1>🗓️ My Daily Planner</h1>
-    
-    <div class="planner-section">
-      <h2>🌅 Morning</h2>
-      <ul>
-        <li><input type="text" placeholder="Add a task..."></li>
-        <li><input type="text" placeholder="Add a task..."></li>
-        <li><input type="text" placeholder="Add a task..."></li>
-      </ul>
-    </div>
-
-    <div class="planner-section">
-      <h2>🌞 Afternoon</h2>
-      <ul>
-        <li><input type="text" placeholder="Add a task..."></li>
-        <li><input type="text" placeholder="Add a task..."></li>
-        <li><input type="text" placeholder="Add a task..."></li>
-      </ul>
-    </div>
-
-    <div class="planner-section">
-      <h2>🌙 Evening</h2>
-      <ul>
-        <li><input type="text" placeholder="Add a task..."></li>
-        <li><input type="text" placeholder="Add a task..."></li>
-        <li><input type="text" placeholder="Add a task..."></li>
-      </ul>
-    </div>
-
-    <div class="planner-section">
-      <h2>📊 Task Summary</h2>
-      <button class="back-btn" onclick="showSummaryPage()">View Summary</button>
-    </div>
+  <div class="controls">
+    <input type="text" id="taskInput" placeholder="Enter a task..." />
+    <select id="timeSlot">
+      <option value="morning">🌅 Morning</option>
+      <option value="afternoon">🌞 Afternoon</option>
+      <option value="evening">🌙 Evening</option>
+    </select>
+    <button onclick="addTask()">➕ Add</button>
+    <button onclick="toggleTheme()">🌓 Theme</button>
+    <button onclick="toggleLanguage()">🌐 Language</button>
   </div>
 
-  <div id="summaryPage" class="summary-container" style="display: none;">
-    <div class="summary-title">📈 Overview of Your Daily Tasks</div>
-
-    <div class="summary-section">
-      <h3>🌅 Morning Tasks</h3>
-      <p>Total: <strong>3</strong></p>
-      <p>Completed: <strong>1</strong></p>
-      <p>Pending: <strong>2</strong></p>
+  <div id="tasksContainer">
+    <div class="task-section" id="morning">
+      <h2>🌅 Morning Tasks</h2>
+      <ol class="task-list" ondragover="allowDrop(event)" ondrop="dropTask(event)"></ol>
     </div>
-
-    <div class="summary-section">
-      <h3>🌞 Afternoon Tasks</h3>
-      <p>Total: <strong>4</strong></p>
-      <p>Completed: <strong>2</strong></p>
-      <p>Pending: <strong>2</strong></p>
+    <div class="task-section" id="afternoon">
+      <h2>🌞 Afternoon Tasks</h2>
+      <ol class="task-list" ondragover="allowDrop(event)" ondrop="dropTask(event)"></ol>
     </div>
-
-    <div class="summary-section">
-      <h3>🌙 Evening Tasks</h3>
-      <p>Total: <strong>2</strong></p>
-      <p>Completed: <strong>0</strong></p>
-      <p>Pending: <strong>2</strong></p>
+    <div class="task-section" id="evening">
+      <h2>🌙 Evening Tasks</h2>
+      <ol class="task-list" ondragover="allowDrop(event)" ondrop="dropTask(event)"></ol>
     </div>
-
-    <button class="back-btn" onclick="showPlannerPage()">← Back to Planner</button>
   </div>
 
   <script>
-    function toggleDarkMode() {
-      document.body.classList.toggle("dark-mode");
-      const button = document.querySelector('.dark-mode-btn');
-      if (document.body.classList.contains("dark-mode")) {
-        button.textContent = "🌞";
-      } else {
-        button.textContent = "🌙";
+    let currentLang = 'en';
+    let draggedItem = null;
+
+    function addTask() {
+      const input = document.getElementById('taskInput');
+      const slot = document.getElementById('timeSlot').value;
+      const taskText = input.value.trim();
+      if (!taskText) return;
+
+      const li = createTaskElement(taskText);
+      document.querySelector(`#${slot} .task-list`).appendChild(li);
+      input.value = '';
+    }
+
+    function createTaskElement(text) {
+      const li = document.createElement('li');
+      li.draggable = true;
+      li.addEventListener('dragstart', () => {
+        draggedItem = li;
+        setTimeout(() => li.classList.add('dragging'), 0);
+      });
+      li.addEventListener('dragend', () => {
+        li.classList.remove('dragging');
+        draggedItem = null;
+      });
+
+      const span = document.createElement('span');
+      span.textContent = text;
+
+      const actions = document.createElement('div');
+      actions.className = 'task-actions';
+
+      const doneBtn = document.createElement('button');
+      doneBtn.innerHTML = '✔️';
+      doneBtn.onclick = () => span.classList.toggle('completed');
+
+      const editBtn = document.createElement('button');
+      editBtn.innerHTML = '✏️';
+      editBtn.onclick = () => {
+        const newTask = prompt(currentLang === 'ar' ? 'تعديل المهمة:' : 'Edit task:', span.textContent);
+        if (newTask) span.textContent = newTask;
+      };
+
+      const delBtn = document.createElement('button');
+      delBtn.innerHTML = '🗑️';
+      delBtn.onclick = () => li.remove();
+
+      actions.append(doneBtn, editBtn, delBtn);
+      li.append(span, actions);
+      return li;
+    }
+
+    function allowDrop(e) {
+      e.preventDefault();
+      if (e.target.classList.contains('task-list')) {
+        e.target.classList.add('drag-over');
       }
     }
 
-    function showSummaryPage() {
-      document.getElementById('plannerPage').style.display = 'none';
-      document.getElementById('summaryPage').style.display = 'block';
+    function dropTask(e) {
+      e.preventDefault();
+      if (e.target.classList.contains('task-list')) {
+        e.target.appendChild(draggedItem);
+        e.target.classList.remove('drag-over');
+      }
     }
 
-    function showPlannerPage() {
-      document.getElementById('plannerPage').style.display = 'block';
-      document.getElementById('summaryPage').style.display = 'none';
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      document.documentElement.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'ar' ? 'en' : 'ar';
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
+      document.getElementById('taskInput').placeholder = currentLang === 'ar' ? 'أدخل المهمة...' : 'Enter a task...';
+      document.querySelector('button[onclick="addTask()"').textContent = currentLang === 'ar' ? '➕ إضافة' : '➕ Add';
+      document.querySelector('button[onclick="toggleTheme()"').textContent = currentLang === 'ar' ? '🌓 الوضع' : '🌓 Theme';
+      document.querySelector('button[onclick="toggleLanguage()"').textContent = currentLang === 'ar' ? '🌐 اللغة' : '🌐 Language';
+
+      document.getElementById('timeSlot').innerHTML = currentLang === 'ar'
+        ? `<option value="morning">🌅 الصباح</option>
+           <option value="afternoon">🌞 الظهيرة</option>
+           <option value="evening">🌙 المساء</option>`
+        : `<option value="morning">🌅 Morning</option>
+           <option value="afternoon">🌞 Afternoon</option>
+           <option value="evening">🌙 Evening</option>`;
+
+      document.querySelector('#morning h2').textContent = currentLang === 'ar' ? '🌅 مهام الصباح' : '🌅 Morning Tasks';
+      document.querySelector('#afternoon h2').textContent = currentLang === 'ar' ? '🌞 مهام الظهيرة' : '🌞 Afternoon Tasks';
+      document.querySelector('#evening h2').textContent = currentLang === 'ar' ? '🌙 مهام المساء' : '🌙 Evening Tasks';
     }
   </script>
 </body>
